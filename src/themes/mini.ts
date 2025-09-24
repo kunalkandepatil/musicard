@@ -48,7 +48,9 @@ const Mini = async (option: MiniOption): Promise<Buffer> => {
         );
     }
 
-    if (option.progress > 100) {
+    if (option.progress < 2.618) {
+        option.progress = 2.618;
+    } else if (option.progress > 100) {
         option.progress = 100;
     }
 

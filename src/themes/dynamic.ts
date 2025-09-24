@@ -51,7 +51,9 @@ const Dynamic = async (option: DynamicOption): Promise<Buffer> => {
         );
     }
 
-    if (option.progress >= 100) {
+    if (option.progress < 0.618) {
+        option.progress = 0.618;
+    } else if (option.progress >= 100) {
         option.progress = 99.999;
     }
 
