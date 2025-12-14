@@ -1,6 +1,6 @@
-/node_modules
-/src
-/tests
-
-tsconfig.json
-tsup.config.ts
+.vscode/
+node_modules/
+Structure/
+Examples/
+.gitignore
+package-lock.json

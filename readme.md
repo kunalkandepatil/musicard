@@ -1,62 +1,104 @@
-<img src="https://ik.imagekit.io/unburn/Musicard.svg" />
-
-<p align="center">Musicard is one of the best canvas libraries to create a variety of music cards.</p>
-
-<p align="center">
-    <a href="https://github.com/unburn/musicard/"><b>Github</b></a> •
-    <a href="https://discord.gg/66uGX7t4ww"><b>Support</b></a>
-</p>
-
 <div align="center">
 
-[![NPM Version](https://img.shields.io/npm/v/musicard?style=flat-square&color=%23FF7A00)](https://www.npmjs.com/package/musicard)
-[![NPM Downloads](https://img.shields.io/npm/dw/musicard?style=flat-square&color=%23FF7A00)](https://www.npmjs.com/package/musicard)
-[![NPM License](https://img.shields.io/npm/l/musicard?style=flat-square&color=%23FF7A00)](https://github.com/unburn/musicard/blob/main/LICENSE)
-[![GitHub Repo stars](https://img.shields.io/github/stars/unburn/musicard?style=flat-square&color=%23FF7A00)](https://github.com/unburn/musicard)
+# 🎵 Musicard
+
+Generate beautiful, stylized music card images with a variety of modern, customizable themes.
+
+<a href="https://github.com/kunalkandepatil?tab=repositories"><b>Check our more</b></a> •
+<a href="https://discord.gg/TvjrWtEuyP"><b>Join our Discord</b></a>
 
 </div>
 
 <div align="center">
-<a href="https://github.com/sponsors/flameface"><img src="https://ik.imagekit.io/unburn/SupportMusicard.svg"/></a>
+
+[![NPM Version](https://img.shields.io/npm/v/musicard?style=flat-square&color=%23FF4C28)](https://www.npmjs.com/package/musicard)
+[![NPM Downloads](https://img.shields.io/npm/dw/musicard?style=flat-square&color=%23FF4C28)](https://www.npmjs.com/package/musicard)
+[![NPM License](https://img.shields.io/npm/l/musicard?style=flat-square&color=%23FF4C28)](https://github.com/unburn/musicard/blob/main/LICENSE)
+[![GitHub Repo stars](https://img.shields.io/github/stars/unburn/musicard?style=flat-square&color=%23FF4C28)](https://github.com/unburn/musicard)
+
 </div>
 
-# Installation
+## ✨ Features
 
-```js
-// using npm
+- **Multiple Themes:** Instantly switch between unique card layouts.
+- **Customizable Styles:** Change colors, fonts, progress bars, and more for each theme.
+- **Explicit Content Badge:** Show/hide explicit content indicator.
+- **Flexible Inputs:** Accepts image buffers or URLs for album art.
+- **Font Management:** Easily register and use custom fonts.
+
+---
+
+## 🎨 Themes
+
+
+| Themes | Preview |
+|:-------:|:-------|
+| Bloom | <img src="https://raw.githubusercontent.com/kunalkandepatil/.github/refs/heads/main/assets/musicard/Bloom.png" width="500"> |
+| Haze | <img src="https://raw.githubusercontent.com/kunalkandepatil/.github/refs/heads/main/assets/musicard/Haze.png" width="500"> |
+| Melt | <img src="https://raw.githubusercontent.com/kunalkandepatil/.github/refs/heads/main/assets/musicard/Melt.png" width="500"> |
+| Ease | <img src="https://raw.githubusercontent.com/kunalkandepatil/.github/refs/heads/main/assets/musicard/Ease.png" width="500"> |
+| Drift | <img src="https://raw.githubusercontent.com/kunalkandepatil/.github/refs/heads/main/assets/musicard/Drift.png" width="500"> |
+| Calm | <img src="https://raw.githubusercontent.com/kunalkandepatil/.github/refs/heads/main/assets/musicard/Calm.png" width="500"> |
+
+---
+
+## 🚀 Quick Start
+
+```bash
 npm install musicard
-
-// using yarn
-yarn add musicard
 ```
 
-# Usage
-
-You can use the Musicard package in your Discord bots, websites, etc.
-
-## Using Create File
-
 ```js
-import { Classic } from 'musicard';
-import fs from 'fs';
+import { initializeFonts, Bloom } from 'musicard';
+import fs from 'node:fs';
 
-//OR
+// Display all available font names
+import { GlobalFonts } from 'musicard';
+console.log(GlobalFonts); // Shows all registered font names
 
-const { Classic } = require('musicard');
-const fs = require('fs');
+(async () => {
+    initializeFonts();
 
-Classic({}).then(x => {
-    fs.writeFileSync('output.png', x);
-});
+    const musicard = await Bloom({
+        trackName: "Run It Up",
+        artistName: "Hanumankind",
+        albumArt: "https://lh3.googleusercontent.com/6DSrfLUE2JEPhwnF-IFuM5IP8rL8DgrpWPtqh0GvCkdT25Vl5lw3nEjLu-dZ3qIByuoEmU7MS3D8PakF=w544-h544-l90-rj",
+        isExplicit: true,
+        timeAdjust: {
+            timeStart: "0:00",
+            timeEnd: "2:54",
+        },
+        progressBar: 10,
+        volumeBar: 70,
+    });
+
+    fs.writeFileSync('example.png', musicard);
+    console.log('✅-> example.png');
+})();
 ```
 
-## Using Discord Bot
+---
+
+## 🖨️ List All Available Fonts
+
+To see all font names currently registered and available for use:
 
 ```js
-const { Classic } = require("musicard");
+import { GlobalFonts } from 'musicard';
+console.log(GlobalFonts); // Prints all registered font names
+```
+
+
+## 🤖 Usage with Discord Bot
+
+Here's how you can use `musicard` in a Discord bot to generate and send a music card image:
+
+```js
+const { initializeFonts, Bloom } = require("musicard");
 const fs = require("fs")
 
-const musicard = await Classic({});
+await initializeFonts();
+const musicard = await Bloom({...})
 
 ...
 
@@ -67,180 +109,43 @@ return message.channel.send({
 })
 ```
 
-## Custom Background (New)
+---
+## 🛠️ API Overview
 
-Use a custom image background and also adjust the darkness of the image.
+Each theme exports a function with options for customization:
 
-```js
-import { Classic } from 'musicard';
-import fs from 'fs';
-
-Classic({
-    thumbnailImage:
-        'https://cdn.discordapp.com/attachments/1220001571228880917/1220001571690123284/01.png?ex=660d5a01&is=65fae501&hm=a8cfb44844e61aa0fd01767cd363af048df28966c30d7b04a59f27fa45cf69c4&',
-    backgroundImage:
-        'https://cdn.discordapp.com/attachments/1220001571228880917/1220001571690123284/01.png?ex=660d5a01&is=65fae501&hm=a8cfb44844e61aa0fd01767cd363af048df28966c30d7b04a59f27fa45cf69c4&',
-    imageDarkness: 60,
-    nameColor: '#DC92FF',
-    progressColor: '#DC92FF',
-    progressBarColor: '#2B2B2B',
-    progress: 50,
-}).then(x => {
-    fs.writeFileSync('output.png', x);
-});
-```
-
-![custom](https://ik.imagekit.io/unburn/custom-output.png?updatedAt=1710995171966)
-
-# Themes
-
-Musicard is the #1 canvas library to create music cards with awesome themes.
-
-## Classic
-
-![classic](/assets/output-classic.png)
-
-```js
-(async () => {
-    const { Classic } = require('musicard');
-    const fs = require('fs');
-
-    const musicard = await Classic({
-        thumbnailImage:
-            'https://lh3.googleusercontent.com/yavtBZZnoxaY21GSS_VIKSg0mvzu1b0r6arH8xvWVskoMaZ5ww3iDMgBNujnIWCt7MOkDsrKapSGCfc=w544-h544-l90-rj',
-        backgroundColor: '#070707',
-        progress: 10,
-        progressColor: '#FF7A00',
-        progressBarColor: '#5F2D00',
-        name: 'Burn',
-        nameColor: '#FF7A00',
-        author: 'By 2WEI & Edda Hayes',
-        authorColor: '#696969',
-        startTime: '0:00',
-        endTime: '4:00',
-        timeColor: '#FF7A00',
-    });
-
-    fs.writeFileSync('musicard.png', musicard);
-})();
+```ts
+type ThemeOptions = {
+	albumArt: string | Buffer;
+	fallbackArt: string;
+	artistName: string;
+	trackName: string;
+	progressBar?: number;
+	volumeBar?: number; // Ease, Melt
+    timeAdjust: { timeStart: string, timeEnd: string };
+	styleConfig?: {
+		artistStyle?: { textColor?: string; textItalic?: boolean; textGlow?: boolean };
+		trackStyle?: { textColor?: string; textItalic?: boolean; textGlow?: boolean };
+		timeStyle?: { textColor?: string; textItalic?: boolean };
+		progressBarStyle?: { barColor: string; barColorDuo?: boolean };
+		volumeBarStyle?: { barColor: string; barColorDuo?: boolean };
+	};
+	isExplicit?: boolean;
+};
 ```
 
 ---
 
-## Classic Pro
+## 🖋️ Fonts
+To use custom fonts, create a `Fonts` folder in your project's root directory and place your font files (e.g., `.ttf`, `.otf`) inside it.
 
-![classicpro](/assets/output-classicpro.png)
-
+Register and use custom fonts:
 ```js
-(async () => {
-    const { ClassicPro } = require('musicard');
-    const fs = require('fs');
-
-    const musicard = await ClassicPro({
-        thumbnailImage:
-            'https://lh3.googleusercontent.com/yavtBZZnoxaY21GSS_VIKSg0mvzu1b0r6arH8xvWVskoMaZ5ww3iDMgBNujnIWCt7MOkDsrKapSGCfc=w544-h544-l90-rj',
-        backgroundColor: '#070707',
-        progress: 10,
-        progressColor: '#FF7A00',
-        progressBarColor: '#5F2D00',
-        name: 'Burn',
-        nameColor: '#FF7A00',
-        author: 'By 2WEI & Edda Hayes',
-        authorColor: '#696969',
-        startTime: '0:00',
-        endTime: '4:00',
-        timeColor: '#FF7A00',
-    });
-
-    fs.writeFileSync('musicard.png', musicard);
-})();
+import { registerFont } from 'musicard';
+registerFont('MyFont.ttf', 'MyFont');
 ```
 
 ---
 
-## Dynamic
-
-![dynamic](/assets/output-dynamic.png)
-
-```js
-(async () => {
-    const { Dynamic } = require('musicard');
-    const fs = require('fs');
-
-    const musicard = await Dynamic({
-        thumbnailImage:
-            'https://lh3.googleusercontent.com/yavtBZZnoxaY21GSS_VIKSg0mvzu1b0r6arH8xvWVskoMaZ5ww3iDMgBNujnIWCt7MOkDsrKapSGCfc=w544-h544-l90-rj',
-        backgroundColor: '#070707',
-        progress: 10,
-        progressColor: '#FF7A00',
-        progressBarColor: '#5F2D00',
-        name: 'Burn',
-        nameColor: '#FF7A00',
-        author: 'By 2WEI & Edda Hayes',
-        authorColor: '#696969',
-    });
-
-    fs.writeFileSync('musicard.png', musicard);
-})();
-```
-
----
-
-## Mini
-
-![mini](/assets/output-mini.png)
-
-```js
-(async () => {
-    const { Mini } = require('musicard');
-    const fs = require('fs');
-
-    const musicard = await Mini({
-        thumbnailImage:
-            'https://lh3.googleusercontent.com/yavtBZZnoxaY21GSS_VIKSg0mvzu1b0r6arH8xvWVskoMaZ5ww3iDMgBNujnIWCt7MOkDsrKapSGCfc=w544-h544-l90-rj',
-        backgroundColor: '#070707',
-        progress: 10,
-        progressColor: '#FF7A00',
-        progressBarColor: '#5F2D00',
-        menuColor: '#FF7A00',
-        paused: false,
-    });
-
-    fs.writeFileSync('musicard.png', musicard);
-})();
-```
-
----
-
-## Upcoming
-
-![Upcoming](/assets/output-upcoming.png)
-
-```js
-(async () => {
-    const { Upcoming } = require('musicard');
-    const fs = require('fs');
-
-    const musicard = await Upcoming({
-        thumbnailImage: 'https://img.youtube.com/vi/lmG0kY9FtRY/maxresdefault.jpg',
-        backgroundImage: fs.readFileSync('bg.png'),
-        imageDarkness: 70,
-        author: 'Testing by UG',
-        title: 'Bad Boy (feat. Luana Kiara)',
-        trackIndexBackgroundRadii: [10, 20, 30, 40, 50, 60, 70, 80, 80, 100],
-    });
-
-    fs.writeFileSync('musicard.png', musicard);
-})();
-```
-
-# Resource
-
-Pull request to add your project here.
-
-| Riffy Music Bot | https://github.com/riffy-team/riffy-music-bot |
-| --------------- | --------------------------------------------- |
-
-# Licence
-
-[GPL](https://github.com/unburn/musicard/blob/main/LICENSE)
+## 📄 License
+MIT

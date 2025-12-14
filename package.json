@@ -1,62 +1,35 @@
 {
-    "name": "musicard",
-    "version": "2.0.5",
-    "description": "Musicard is one of the best canvas libraries to create a variety of music cards.",
-    "main": "dist/index.js",
-    "module": "dist/index.mjs",
-    "types": "dist/index.d.ts",
-    "exports": {
-        ".": {
-            "require": "./dist/index.js",
-            "import": "./dist/index.mjs",
-            "types": "./dist/index.d.ts"
-        }
-    },
-    "files": [
-        "dist",
-        "fonts"
-    ],
-    "scripts": {
-        "build": "tsup",
-        "build:watch": "tsup --watch",
-        "deploy": "npm publish",
-        "deploy:beta": "npm publish --tag beta",
-        "test:m": "cd tests && node index.mjs",
-        "test:c": "cd tests && node index.js",
-        "lint": "biome lint --write src/",
-        "format": "biome format --write src/"
-    },
-    "keywords": [
-        "musicard",
-        "music-card",
-        "discord-music-card",
-        "music-card-discord",
-        "discord.js",
-        "spotify",
-        "youtube",
-        "image",
-        "node-canvas",
-        "canvas-constructor",
-        "discord",
-        "discord-canvas"
-    ],
-    "author": "flameface",
-    "license": "GPL-3.0-only",
-    "devDependencies": {
-        "@biomejs/biome": "^1.8.3",
-        "@types/node": "^22.0.1",
-        "tsup": "^8.2.3",
-        "typescript": "^5.5.4"
-    },
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/unburn/musicard.git"
-    },
-    "bugs": {
-        "url": "https://github.com/unburn/musicard/issues"
-    },
-    "dependencies": {
-        "@napi-rs/canvas": "^0.1.53",
-        "cropify": "latest"
-    }
+  "name": "musicard",
+  "version": "3.0.0",
+  "description": "Generate beautiful, stylized music card images with a variety of modern, customizable themes.",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": "./dist/index.js"
+  },
+  "files": [
+    "dist",
+    "Fonts"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "clean": "node -e \"require('fs').rmSync('dist',{recursive:true,force:true})\"",
+    "prepare": "npm run build"
+  },
+  "dependencies": {
+    "@napi-rs/canvas": "^0.1.83",
+    "cropify": "^2.0.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.30",
+    "typescript": "^5.6.3"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kunalkandepatil/musicard.git"
+  },
+  "bugs": {
+    "url": "https://github.com/kunalkandepatil/musicard/issues"
+  }
 }

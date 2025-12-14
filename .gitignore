@@ -1,4 +1,5 @@
-node_modules
-dist
-yarn.lock
-pnpm-lock.json
+.vscode/
+node_modules/
+dist/
+.npmignore
+package-lock.json
