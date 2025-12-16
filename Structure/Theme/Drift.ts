@@ -16,8 +16,10 @@ export type DriftOptions = {
     trackStyle?: { textColor?: string; textItalic?: boolean; textGlow?: boolean };
     timeStyle?: { textColor?: string; textItalic?: boolean };
     progressBarStyle?: { barColor: string; barColorDuo?: boolean };
+    explicitStyle?: { iconColor?: string; iconOpacity?: number };
   };
   isExplicit?: boolean;
+  backgroundColor?: string;
 };
 
 export const Drift = async ({
@@ -32,14 +34,19 @@ export const Drift = async ({
     trackStyle = { textColor: 'white', textItalic: false, textGlow: false },
     timeStyle = { textColor: 'white', textItalic: false },
     progressBarStyle = { barColor: 'white', barColorDuo: false },
+    explicitStyle = { iconColor: 'white', iconOpacity: 48 },
   } = {},
   isExplicit = false,
+  backgroundColor = 'black',
 }: DriftOptions): Promise<Buffer> => {
   const structure = generateSvg(
     DriftBS({
       isExplicit,
       progressBar,
       progressBarStyle,
+      backgroundColor,
+      explicitColor: explicitStyle.iconColor,
+      explicitOpacity: (explicitStyle.iconOpacity || 48) / 100,
     }),
   );
 
@@ -54,7 +61,7 @@ export const Drift = async ({
   const canvas = createCanvas(1415, 380);
   const context = canvas.getContext('2d');
 
-  context.fillStyle = 'black';
+  context.fillStyle = backgroundColor;
   context.fillRect(0, 0, canvas.width, canvas.height);
 
   context.filter = 'blur(60px) opacity(0.6)';

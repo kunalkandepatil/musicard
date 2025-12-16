@@ -17,6 +17,7 @@ export type CalmOptions = {
     timeStyle?: { textColor?: string; textItalic?: boolean };
     progressBarStyle?: { barColor: string; barColorDuo?: boolean };
   };
+  backgroundColor?: string;
 };
 
 export const Calm = async ({
@@ -32,11 +33,13 @@ export const Calm = async ({
     timeStyle = { textColor: 'white', textItalic: false },
     progressBarStyle = { barColor: 'white', barColorDuo: false },
   } = {},
+  backgroundColor = 'black',
 }: CalmOptions): Promise<Buffer> => {
   const structure = generateSvg(
     CalmBS({
       progressBar,
       progressBarStyle,
+      backgroundColor
     }),
   );
 
@@ -51,7 +54,7 @@ export const Calm = async ({
   const canvas = createCanvas(1415, 380);
   const context = canvas.getContext('2d');
 
-  context.fillStyle = 'black';
+  context.fillStyle = backgroundColor;
   context.fillRect(0, 0, canvas.width, canvas.height);
 
   context.filter = 'blur(60px) opacity(0.6)';

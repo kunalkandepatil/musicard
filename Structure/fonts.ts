@@ -6,7 +6,7 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const registeredFontNames: string[] = ['GoogleSansFlex'];
+const registeredFontNames: string[] = ['GoogleSans'];
 
 function buildGlobalFonts(): string {
   const quoted = registeredFontNames.map((n) => `"${n}"`).join(', ');
@@ -49,7 +49,7 @@ export function registerFont(fontPath: string, fontName: string): void {
 
 export function initializeFonts(): void {
   try {
-    registerFont('GoogleSansFlex.ttf', 'GoogleSansFlex');
+    registerFont('GoogleSans.ttf', 'GoogleSans');
   } catch (e) {
     throw e;
   }

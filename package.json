@@ -1,7 +1,7 @@
 {
   "name": "musicard",
-  "version": "3.0.0",
-  "description": "Generate beautiful, stylized music card images with a variety of modern, customizable themes.",
+  "version": "3.0.1",
+  "description": "A powerful canvas-based library to generate stunning, highly customizable music cards with modern themes and rich features.",
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

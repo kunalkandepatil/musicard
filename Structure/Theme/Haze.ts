@@ -16,8 +16,10 @@ export type HazeOptions = {
     trackStyle?: { textColor?: string; textItalic?: boolean; textGlow?: boolean };
     timeStyle?: { textColor?: string; textItalic?: boolean };
     progressBarStyle?: { barColor: string; barColorDuo?: boolean };
+    explicitStyle?: { iconColor?: string; iconOpacity?: number };
   };
   isExplicit?: boolean;
+  backgroundColor?: string;
 };
 
 export const Haze = async ({
@@ -32,21 +34,26 @@ export const Haze = async ({
     trackStyle = { textColor: 'white', textItalic: false, textGlow: false },
     timeStyle = { textColor: 'white', textItalic: false },
     progressBarStyle = { barColor: 'white', barColorDuo: false },
+    explicitStyle = { iconColor: 'white', iconOpacity: 48 },
   } = {},
   isExplicit = false,
+  backgroundColor = 'black',
 }: HazeOptions): Promise<Buffer> => {
   const structure = generateSvg(
     HazeBS({
       isExplicit,
       progressBar,
       progressBarStyle,
+      explicitColor: explicitStyle.iconColor,
+      explicitOpacity: (explicitStyle.iconOpacity || 48) / 100,
+      backgroundColor
     }),
   );
 
   const canvas = createCanvas(1415, 477);
   const context = canvas.getContext('2d');
 
-  context.fillStyle = 'black';
+  context.fillStyle = backgroundColor;
   context.fillRect(0, 0, canvas.width, canvas.height);
 
   context.filter = 'blur(60px) opacity(0.7)';

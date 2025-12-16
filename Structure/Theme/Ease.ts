@@ -9,7 +9,7 @@ export type EaseOptions = {
   fallbackArt: string;
   artistName: string;
   trackName: string;
-  timeAdjust?: { timeTotal: string };
+  timeAdjust?: { timeStart: string; timeEnd: string };
   progressBar?: number;
   volumeBar?: number;
   styleConfig?: {
@@ -18,8 +18,10 @@ export type EaseOptions = {
     timeStyle?: { textColor?: string; textItalic?: boolean };
     progressBarStyle?: { barColor: string; barColorDuo?: boolean };
     volumeBarStyle?: { barColor: string; barColorDuo?: boolean };
+    explicitStyle?: { iconColor?: string; iconOpacity?: number };
   };
   isExplicit?: boolean;
+  backgroundColor?: string;
 };
 
 export const Ease = async ({
@@ -27,7 +29,7 @@ export const Ease = async ({
   fallbackArt,
   artistName = "Unknown Artist",
   trackName = "Unknown Track",
-  timeAdjust: { timeTotal } = { timeTotal: '0:00/0:00' },
+  timeAdjust: { timeStart, timeEnd } = { timeStart: '0:00', timeEnd: '0:00' },
   progressBar = 0,
   volumeBar = 0,
   styleConfig: {
@@ -36,8 +38,10 @@ export const Ease = async ({
     timeStyle = { textColor: 'white', textItalic: false },
     progressBarStyle = { barColor: 'white', barColorDuo: false },
     volumeBarStyle = { barColor: 'white', barColorDuo: false },
+    explicitStyle = { iconColor: 'white', iconOpacity: 48 },
   } = {},
   isExplicit = false,
+  backgroundColor = 'black',
 }: EaseOptions): Promise<Buffer> => {
   const structure = generateSvg(
     EaseBS({
@@ -46,6 +50,9 @@ export const Ease = async ({
       progressBarStyle,
       volumeBar,
       volumeBarStyle,
+      backgroundColor,
+      explicitColor: explicitStyle.iconColor,
+      explicitOpacity: (explicitStyle.iconOpacity || 48) / 100,
     }),
   );
 
@@ -60,7 +67,7 @@ export const Ease = async ({
   const canvas = createCanvas(1415, 348);
   const context = canvas.getContext('2d');
 
-  context.fillStyle = 'black';
+  context.fillStyle = backgroundColor;
   context.fillRect(0, 0, canvas.width, canvas.height);
 
   context.filter = 'blur(60px) opacity(0.6)';
@@ -149,7 +156,7 @@ export const Ease = async ({
 
   context.textAlign = 'left';
   context.textBaseline = 'middle';
-  context.fillText(timeTotal, 710, 255);
+  context.fillText(`${timeStart}${timeEnd ? "/" + timeEnd : ""}`, 710, 255);
 
   context.textAlign = 'left';
   context.textBaseline = 'middle';

@@ -18,8 +18,11 @@ export type MeltOptions = {
     timeStyle?: { textColor?: string; textItalic?: boolean };
     progressBarStyle?: { barColor: string; barColorDuo?: boolean };
     volumeBarStyle?: { barColor: string; barColorDuo?: boolean };
+    explicitStyle?: { iconColor?: string; iconOpacity?: number };
+
   };
   isExplicit?: boolean;
+  backgroundColor?: string;
 };
 
 export const Melt = async ({
@@ -36,8 +39,10 @@ export const Melt = async ({
     timeStyle = { textColor: 'white', textItalic: false },
     progressBarStyle = { barColor: 'white', barColorDuo: false },
     volumeBarStyle = { barColor: 'white', barColorDuo: false },
+    explicitStyle = { iconColor: 'white', iconOpacity: 48 },
   } = {},
   isExplicit = false,
+  backgroundColor = 'black',
 }: MeltOptions): Promise<Buffer> => {
   const structure = generateSvg(
     MeltBS({
@@ -46,6 +51,9 @@ export const Melt = async ({
       progressBarStyle,
       volumeBar,
       volumeBarStyle,
+      backgroundColor,
+      explicitColor: explicitStyle.iconColor,
+      explicitOpacity: (explicitStyle.iconOpacity || 48) / 100,
     }),
   );
 
