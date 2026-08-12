@@ -3,6 +3,7 @@ import { cropImage } from 'cropify';
 import { createCanvas, loadImage } from '@napi-rs/canvas';
 import { CalmBS } from './BaseStructure.js';
 import { GlobalFonts } from '../fonts.js';
+import { drawCardTypeDetails, normalizeCardType, showsPlaybackDetails, type CardType } from './CardType.js';
 
 export type CalmOptions = {
   albumArt: string | Buffer;
@@ -11,6 +12,10 @@ export type CalmOptions = {
   trackName: string;
   timeAdjust?: { timeStart: string; timeEnd: string };
   progressBar?: number;
+  type?: CardType;
+  likes?: number;
+  views?: number;
+  position?: number;
   styleConfig?: {
     artistStyle?: { textColor?: string; textItalic?: boolean; textGlow?: boolean };
     trackStyle?: { textColor?: string; textItalic?: boolean; textGlow?: boolean };
@@ -27,6 +32,10 @@ export const Calm = async ({
   trackName = "Unknown Track",
   timeAdjust: { timeStart, timeEnd } = { timeStart: '0:00', timeEnd: '0:00' },
   progressBar = 0,
+  type,
+  likes,
+  views,
+  position,
   styleConfig: {
     artistStyle = { textColor: 'white', textItalic: false, textGlow: false },
     trackStyle = { textColor: 'white', textItalic: false, textGlow: false },
@@ -35,10 +44,13 @@ export const Calm = async ({
   } = {},
   backgroundColor = 'black',
 }: CalmOptions): Promise<Buffer> => {
+  const cardType = normalizeCardType(type);
+  const showPlaybackDetails = showsPlaybackDetails(cardType);
   const structure = generateSvg(
     CalmBS({
       progressBar,
       progressBarStyle,
+      showProgress: showPlaybackDetails,
       backgroundColor
     }),
   );
@@ -115,17 +127,26 @@ export const Calm = async ({
   context.shadowOffsetX = 0;
   context.shadowOffsetY = 0;
 
-  context.font = `${timeStyle.textItalic ? 'italic' : 'normal'} 25px ${GlobalFonts}`;
-  context.fillStyle = timeStyle.textColor || 'white';
+  if (showPlaybackDetails) {
+    context.font = `${timeStyle.textItalic ? 'italic' : 'normal'} 25px ${GlobalFonts}`;
+    context.fillStyle = timeStyle.textColor || 'white';
 
-  context.textAlign = 'right';
-  context.textBaseline = 'middle';
-  context.fillText(timeStart, 400, 270);
+    context.textAlign = 'right';
+    context.textBaseline = 'middle';
+    context.fillText(timeStart, 400, 270);
 
-  context.textAlign = 'left';
-  context.fillText(timeEnd, 1015, 270);
-  context.textAlign = 'start';
-  context.textBaseline = 'alphabetic';
+    context.textAlign = 'left';
+    context.fillText(timeEnd, 1015, 270);
+    context.textAlign = 'start';
+    context.textBaseline = 'alphabetic';
+  } else {
+    drawCardTypeDetails(
+      context,
+      cardType,
+      { x: 700, y: 267, maxWidth: 600, color: timeStyle.textColor, align: 'center' },
+      { likes, views, position },
+    );
+  }
 
   const croppedImage = await cropImage({
     imagePath: canvas.toBuffer('image/png') as any,

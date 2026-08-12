@@ -3,6 +3,7 @@ import { cropImage } from 'cropify';
 import { createCanvas, loadImage } from '@napi-rs/canvas';
 import { BloomBS } from './BaseStructure.js';
 import { GlobalFonts } from '../fonts.js';
+import { drawCardTypeDetails, normalizeCardType, showsPlaybackDetails, type CardType } from './CardType.js';
 
 export type BloomOptions = {
   albumArt: string | Buffer;
@@ -11,6 +12,10 @@ export type BloomOptions = {
   trackName: string;
   timeAdjust?: { timeStart: string; timeEnd: string };
   progressBar?: number;
+  type?: CardType;
+  likes?: number;
+  views?: number;
+  position?: number;
   styleConfig?: {
     artistStyle?: { textColor?: string; textItalic?: boolean; textGlow?: boolean };
     trackStyle?: { textColor?: string; textItalic?: boolean; textGlow?: boolean };
@@ -29,6 +34,10 @@ export const Bloom = async ({
   trackName = "Unknown Track",
   timeAdjust: { timeStart, timeEnd } = { timeStart: '0:00', timeEnd: '0:00' },
   progressBar = 0,
+  type,
+  likes,
+  views,
+  position,
   styleConfig: {
     artistStyle = { textColor: 'white', textItalic: false, textGlow: false },
     trackStyle = { textColor: 'white', textItalic: false, textGlow: false },
@@ -39,11 +48,14 @@ export const Bloom = async ({
   isExplicit = false,
   backgroundColor = 'black',
 }: BloomOptions): Promise<Buffer> => {
+  const cardType = normalizeCardType(type);
+  const showPlaybackDetails = showsPlaybackDetails(cardType);
   const structure = generateSvg(
     BloomBS({
       isExplicit,
       progressBar,
       progressBarStyle,
+      showProgress: showPlaybackDetails,
       backgroundColor,
       explicitColor: explicitStyle.iconColor,
       explicitOpacity: (explicitStyle.iconOpacity || 48) / 100,
@@ -145,18 +157,27 @@ export const Bloom = async ({
   context.shadowOffsetX = 0;
   context.shadowOffsetY = 0;
 
-  context.font = `${timeStyle.textItalic ? 'italic' : 'normal'} 30px ${GlobalFonts}`;
-  context.fillStyle = timeStyle.textColor || 'white';
+  if (showPlaybackDetails) {
+    context.font = `${timeStyle.textItalic ? 'italic' : 'normal'} 30px ${GlobalFonts}`;
+    context.fillStyle = timeStyle.textColor || 'white';
 
-  context.textAlign = 'left';
-  context.textBaseline = 'middle';
-  context.fillText(timeStart, 530, 370);
+    context.textAlign = 'left';
+    context.textBaseline = 'middle';
+    context.fillText(timeStart, 530, 370);
 
-  context.textAlign = 'right';
-  context.fillText(timeEnd, 1235, 370);
+    context.textAlign = 'right';
+    context.fillText(timeEnd, 1235, 370);
 
-  context.textAlign = 'start';
-  context.textBaseline = 'alphabetic';
+    context.textAlign = 'start';
+    context.textBaseline = 'alphabetic';
+  } else {
+    drawCardTypeDetails(
+      context,
+      cardType,
+      { x: 530, y: 361, maxWidth: 705, color: timeStyle.textColor },
+      { likes, views, position },
+    );
+  }
 
   const croppedImage = await cropImage({
     imagePath: canvas.toBuffer('image/png') as any,

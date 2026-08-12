@@ -3,6 +3,7 @@ import { cropImage } from 'cropify';
 import { createCanvas, loadImage } from '@napi-rs/canvas';
 import { EaseBS } from './BaseStructure.js';
 import { GlobalFonts } from '../fonts.js';
+import { drawCardTypeDetails, normalizeCardType, showsPlaybackDetails, type CardType } from './CardType.js';
 
 export type EaseOptions = {
   albumArt: string | Buffer;
@@ -12,6 +13,10 @@ export type EaseOptions = {
   timeAdjust?: { timeStart: string; timeEnd: string };
   progressBar?: number;
   volumeBar?: number;
+  type?: CardType;
+  likes?: number;
+  views?: number;
+  position?: number;
   styleConfig?: {
     artistStyle?: { textColor?: string; textItalic?: boolean; textGlow?: boolean };
     trackStyle?: { textColor?: string; textItalic?: boolean; textGlow?: boolean };
@@ -32,6 +37,10 @@ export const Ease = async ({
   timeAdjust: { timeStart, timeEnd } = { timeStart: '0:00', timeEnd: '0:00' },
   progressBar = 0,
   volumeBar = 0,
+  type,
+  likes,
+  views,
+  position,
   styleConfig: {
     artistStyle = { textColor: 'white', textItalic: false, textGlow: false },
     trackStyle = { textColor: 'white', textItalic: false, textGlow: false },
@@ -43,11 +52,14 @@ export const Ease = async ({
   isExplicit = false,
   backgroundColor = 'black',
 }: EaseOptions): Promise<Buffer> => {
+  const cardType = normalizeCardType(type);
+  const showPlaybackDetails = showsPlaybackDetails(cardType);
   const structure = generateSvg(
     EaseBS({
       isExplicit,
       progressBar,
       progressBarStyle,
+      showProgress: showPlaybackDetails,
       volumeBar,
       volumeBarStyle,
       backgroundColor,
@@ -151,19 +163,28 @@ export const Ease = async ({
   context.shadowOffsetX = 0;
   context.shadowOffsetY = 0;
 
-  context.font = `${timeStyle.textItalic ? 'italic' : 'normal'} 25px ${GlobalFonts}`;
-  context.fillStyle = timeStyle.textColor || 'white';
+  if (showPlaybackDetails) {
+    context.font = `${timeStyle.textItalic ? 'italic' : 'normal'} 25px ${GlobalFonts}`;
+    context.fillStyle = timeStyle.textColor || 'white';
 
-  context.textAlign = 'left';
-  context.textBaseline = 'middle';
-  context.fillText(`${timeStart}${timeEnd ? "/" + timeEnd : ""}`, 710, 255);
+    context.textAlign = 'left';
+    context.textBaseline = 'middle';
+    context.fillText(`${timeStart}${timeEnd ? "/" + timeEnd : ""}`, 710, 255);
 
-  context.textAlign = 'left';
-  context.textBaseline = 'middle';
-  context.fillText(`${volumeBar}%`, 1140, 255);
+    context.textAlign = 'left';
+    context.textBaseline = 'middle';
+    context.fillText(`${volumeBar}%`, 1140, 255);
 
-  context.textAlign = 'start';
-  context.textBaseline = 'alphabetic';
+    context.textAlign = 'start';
+    context.textBaseline = 'alphabetic';
+  } else {
+    drawCardTypeDetails(
+      context,
+      cardType,
+      { x: 710, y: 247, maxWidth: 410, color: timeStyle.textColor },
+      { likes, views, position },
+    );
+  }
 
   const croppedImage = await cropImage({
     imagePath: canvas.toBuffer('image/png') as any,
